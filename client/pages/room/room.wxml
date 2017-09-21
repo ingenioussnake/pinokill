@@ -1,0 +1,47 @@
+<import src="/pages/room/seat.wxml" />
+<view class="container">
+    <view class="left-seats">
+        <block wx:for="{{seats}}" wx:key="index">
+            <template wx:if="{{index < (seats.length + 1) / 2}}" is="seat" data="{{index: item.index, self: index === seat, ...item.user}}" bindtap="sit"/>
+        </block>
+    </view>
+    <view class="main">
+        <view class="content game-logs" wx:if="{{messages.length > 0}}"></view>
+        <view class="content game-config" wx:if="{{messages.length === 0}}">
+            <view class="config-container">
+                <view class="config-title">游戏配置</view>
+                <view class="config-description">
+                    <text>狼人{{config.werewolf_count}}名</text>
+                    <block wx:if="{{special_werewolves.length > 0}}">
+                        <text>(包含</text>
+                        <text wx:for="{{special_werewolves}}" wx:key="*this">{{item}} </text>
+                        <text>)</text>
+                    </block>
+                </view>
+                <view class="config-description">村民{{config.village_count + (config.hasThief ? 2 : 0)}}名</view>
+                <view class="config-description config-list">神民：<text wx:for="{{protoss}}" wx:key="*this">{{item}}, </text></view>
+                <view class="config-description config-list">其他角色：<text wx:for="{{special_roles}}" wx:key="*this">{{item}}, </text></view>
+                <view class="config-description">
+                    <text>屠{{config.massacre ? '城' : '边'}}, </text>
+                    <text>{{config.enable_sheriff ? '' : '没'}}有警长</text>
+                </view>
+                <view class="config-description" wx:if="{{hasWitch}}">女巫首夜{{config.witch_self_rescue ? '' : '不'}}允许自救</view>
+                <view class="config-description" wx:if="{{hasBeauty}}">狼美人{{config.beauty_deadlove_exile ? '仅被放逐才' : '死亡即可'}}殉情</view>
+            </view>
+        </view>
+        <view class="actions" wx:if="{{!started}}">
+            <view class="invite">
+                <button>邀请</button>
+            </view>
+            <view class="host-actions">
+                <button wx:if="{{enableSettings}}">设置</button>
+                <button type="primary">开始</button>
+            </view>
+        </view>
+    </view>
+    <view class="right-seats">
+        <block wx:for="{{seats}}" wx:key="index">
+            <template wx:if="{{index >= (seats.length + 1) / 2}}" is="seat" data="{{index: item.index, self: index === seat, ...item.user}}" bindtap="sit"/>
+        </block>
+    </view>
+</view>

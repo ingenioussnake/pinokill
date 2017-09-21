@@ -1,0 +1,15 @@
+<view class="container">
+    <view class="welcome">
+        <text class="title">欢迎来到PinoKill俱乐部</text>
+    </view>
+    <view class="userinfo" wx:if="{{!!userInfo.nickName}}">
+        <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
+        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+    </view>
+    <view class="room-actions" wx:if="{{!!userInfo.nickName}}">
+        <navigator url="/pages/setting/setting?type=create"><button type="primary">创建房间</button></navigator>
+        <view class="join-room">
+            <input maxlength='4' value='{{room_number}}' /><button bindtap='joinRoom'>加入房间</button>
+        </view>
+    </view>
+</view>

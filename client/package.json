@@ -1,0 +1,16 @@
+{
+  "name": "pinokill-club",
+  "version": "0.1.0",
+  "description": "PinoKill狼人杀俱乐部",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tencentyun/weapp-client-demo.git"
+  },
+  "keywords": [],
+  "author": "Boyce",
+  "license": "MIT",
+  "dependencies": {
+    "wafer2-client-sdk": "^1.0.0"
+  }
+}

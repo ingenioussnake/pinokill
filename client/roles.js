@@ -1,0 +1,121 @@
+module.exports = [{
+    name: 'werewolf',
+    label: '狼人',
+    campus: 'werewolf',
+    checkAsWerewolf: true,
+    required: true,
+    enabled: true,
+    priority: 5
+}, {
+    name: 'white_werewolf',
+    label: '白狼王',
+    campus: 'werewolf',
+    checkAsWerewolf: true,
+    required: false,
+    enabled: false,
+    priority: 5
+}, {
+    name: 'demon',
+    label: '恶魔',
+    campus: 'werewolf',
+    checkAsWerewolf: true,
+    required: false,
+    enabled: false,
+    priority: 1
+}, {
+    name: 'beauty_werewolf',
+    label: '狼美人', 
+    campus: 'werewolf',
+    checkAsWerewolf: true,
+    required: false,
+    enabled: false,
+    priority: 4
+}, {
+    name: 'invisible_werewolf',
+    label: '隐狼',
+    campus: 'werewolf',
+    checkAsWerewolf: false,
+    required: false,
+    enabled: false,
+    priority: -1
+}, {
+    name: 'village',
+    label: '村民',
+    campus: 'people',
+    checkAsWerewolf: false,
+    required: true,
+    enabled: true,
+    priority: -1
+}, {
+    name: 'prophet',
+    label: '预言家',
+    campus: 'people',
+    checkAsWerewolf: false,
+    required: false,
+    enabled: true,
+    priority: 1
+}, {
+    name: 'witch',
+    label: '女巫',
+    campus: 'people',
+    checkAsWerewolf: false,
+    required: false,
+    enabled: true,
+    priority: 4
+}, {
+    name: 'hunter',
+    label: '猎人',
+    campus: 'people',
+    checkAsWerewolf: false,
+    required: false,
+    enabled: true,
+    priority: 1
+}, {
+    name: 'idiot',
+    label: '白痴',
+    campus: 'people',
+    checkAsWerewolf: false,
+    required: false,
+    enabled: false,
+    priority: -1
+}, {
+    name: 'guard',
+    label: '守卫',
+    campus: 'people',
+    checkAsWerewolf: false,
+    required: false,
+    enabled: false,
+    priority: 6
+}, {
+    name: 'knight',
+    label: '骑士',
+    campus: 'people',
+    checkAsWerewolf: false,
+    required: false,
+    enabled: false,
+    priority: -1
+}, {
+     name: 'cupid',
+     label: '丘比特',
+     campus: 'others',
+     checkAsWerewolf: false,
+     required: false,
+     enabled: false,
+     priority: 7
+}, {
+    name: 'thief',
+    label: '盗贼',
+    campus: 'others',
+    checkAsWerewolf: false,
+    required: false,
+    enabled: false,
+    priority: 10
+}, {
+    name: 'desire_demon',
+    label: '魅魔',
+    campus: 'others',
+    checkAsWerewolf: true,
+    required: false,
+    enabled: false,
+    priority: 4
+}];

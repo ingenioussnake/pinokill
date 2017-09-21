@@ -1,0 +1,61 @@
+/* pages/room/room.wxss */
+@import './seat.wxss';
+page {
+    width: calc(100% - 20rpx);
+    height: calc(100% - 20rpx);
+    padding: 10rpx;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.left-seats, .right-seats {
+    width: auto;
+    flex-grow: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.right-seats {
+    flex-direction: column-reverse;
+}
+
+.main {
+    flex-grow: 1;
+    padding: 10rpx;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex-grow: 1
+}
+
+/* game configuration */
+.game-config {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.config-title {
+    font-size: 48rpx;
+}
+
+.config-description {
+    font-size: 32rpx;
+}
+
+.actions {
+    flex-grow: 0;
+    flex-basis: auto;
+    margin: 20rpx;
+}
+
+.actions button {
+    margin-top: 10rpx;
+}

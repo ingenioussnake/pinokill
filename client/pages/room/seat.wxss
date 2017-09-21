@@ -1,0 +1,32 @@
+.seat {
+    width: 168rpx;
+    position: relative;
+    border: 1rpx solid black;
+}
+
+.seat.seat-self {
+    border: 1rpx solid gold;
+}
+
+.seat-index {
+    position:absolute;
+    left:0;
+    top:0;
+    font-size:64rpx;
+}
+
+.avatar {
+  width: 128rpx;
+  height: 128rpx;
+  margin: 30rpx 20rpx 10rpx 20rpx;
+  border-radius: 50%;
+}
+
+.nickname {
+    padding:10rpx;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    overflow:hidden;
+    font-size:32rpx;
+    text-align:center;
+}

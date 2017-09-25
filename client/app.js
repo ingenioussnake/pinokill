@@ -10,10 +10,14 @@ App({
      * 小程序初始化时执行，我们初始化客户端的登录地址，以支持所有的会话操作
      */
     onLaunch() {
+        this.globalData.version = wx.getStorageSync("version")
+        this.globalData.engine = wx.getStorageSync("engine")
         qcloud.setLoginUrl(config.service.loginUrl);
     },
 
     globalData: {
-        userInfo: null
+        userInfo: null,
+        version: null,
+        engine: null
     }
 });

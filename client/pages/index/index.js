@@ -1,33 +1,9 @@
 // 引入 QCloud 小程序增强 SDK
 const qcloud = require('../../vendor/wafer2-client-sdk/index');
 const config = require('../../config');
-
-const app = getApp();
+const GameUtils = require('../../utils/GameUtils');
 const Tips = require('../../utils/TipsUtils');
-
-const doLogin = (onLogin) => {
-    Tips.showBusy('正在登录');
-    qcloud.login({
-        success(result) {
-            if (!result) {
-                qcloud.request({
-                    url: config.service.requestUrl,
-                    login: true,
-                    success: (response) => {
-                        onLogin(response.data.data);
-                    }
-                });
-            } else {
-                onLogin(result);
-            }
-        },
-
-        fail(error) {
-            Tips.showModel('登录失败', error);
-            console.log('登录失败', error);
-        }
-    });
-};
+const app = getApp();
 
 /**
  * 使用 Page 初始化页面，具体可参考微信公众平台上的文档
@@ -43,12 +19,11 @@ Page({
     },
 
     onLoad() {
-        doLogin( userInfo => {
-            Tips.showSuccess('登录成功');
-            console.log('登录成功', userInfo);
-            app.globalData.userInfo = userInfo;
-            this.setData({ userInfo });
-        } );
+        GameUtils.assert();
+    },
+
+    onShow() {
+        this.setData({ userInfo: app.globalData.userInfo });
     },
 
     joinRoom() {

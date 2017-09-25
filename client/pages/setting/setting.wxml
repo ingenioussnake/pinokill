@@ -3,7 +3,7 @@
 <view class="page">
     <view class="page__hd">
         <view class="weui-flex">
-            <view class="page__title header-label">游戏总人数 {{config.werewolf_count + config.village_count + config.roles.length}}</view>
+            <view class="page__title header-label">游戏总人数 {{werewolf_count + village_count + protoss_count + others_count}}</view>
             <view class="page__title header-action" bindtap='submit'>开始</view>
         </view>
     </view>
@@ -12,14 +12,14 @@
             <view class="game-config__item">
                 <view id="game-config-0" class="weui-flex game-config__item__hd {{status[0] ? 'game-config__item__hd_show' : ''}}" bindtap='toggleConfig'>
                     <view class="weui-flex__item">狼人配置</view>
-                    <view class="weui-flex__item-end">{{config.werewolf_count}}</view>
+                    <view class="weui-flex__item-end">{{werewolf_count}}</view>
                 </view>
                 <view class="game-config__item__bd {{status[0] ? 'game-config__item__bd_show' : ''}}">
                     <view class="weui-cells {{status[0] ? 'weui-cells_show' : ''}}">
                         <view class="weui-cell weui-cell_access">
                             <view class="weui-cell__bd">狼人数</view>
                             <view class="weui-cell__ft">
-                                <template is="zan-quantity" data="{{ quantity: config.werewolf_count, max: 10, min: 1, componentId: 'werewolf-count' }}" />
+                                <template is="zan-quantity" data="{{ quantity: werewolf_count, max: 10, min: 1, componentId: 'werewolf-count' }}" />
                             </view>
                         </view>
                         <block wx:for="{{roles}}" wx:key="name">
@@ -56,13 +56,13 @@
             <view class="game-config__item">
                 <view id="game-config-2" class="weui-flex game-config__item__hd {{status[2] ? 'game-config__item__hd_show' : ''}}" bindtap='toggleConfig'>
                     <view class="weui-flex__item">村民配置</view>
-                    <view class="weui-flex__item-end">{{config.village_count}}</view>
+                    <view class="weui-flex__item-end">{{village_count}}</view>
                 </view>
                 <view class="game-config__item__bd {{status[2] ? 'game-config__item__bd_show' : ''}}">
                     <view class="weui-cell weui-cell_access">
                         <view class="weui-cell__bd">村民数</view>
                         <view class="weui-cell__ft">
-                            <template is="zan-quantity" data="{{ quantity: config.village_count, max: 10, min: 1, componentId: 'village-count' }}" />
+                            <template is="zan-quantity" data="{{ quantity: village_count, max: 10, min: 1, componentId: 'village-count' }}" />
                         </view>
                     </view>
                 </view>

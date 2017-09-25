@@ -1,0 +1,22 @@
+/**index.wxss**/
+.welcome {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 4rem;
+    margin-bottom: 3rem;
+}
+
+.welcome .title {
+    font-size: x-large;
+}
+
+.room-actions {
+  margin-top: 3rem;
+  padding: 0 2rem;
+}
+
+.login {
+    display: flex;
+    margin-top: 1rem;
+}

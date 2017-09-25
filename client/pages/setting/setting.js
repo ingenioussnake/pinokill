@@ -1,7 +1,5 @@
 const Zan = require("../../vendor/zanui/index");
 
-const ROLES = require("../../roles");
-
 const app = getApp();
 
 Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
@@ -10,8 +8,11 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
         roles: [],
         room: null,
         status: [false, false, false, false, false],
+        werewolf_count: 0,
         protoss_count: 0,
+        village_count: 0,
         others_count: 0,
+        hasThief: false,
         hasWitch: false,
         hasBeauty: false,
         othersEnabled: false
@@ -28,15 +29,16 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
     },
 
     handleZanQuantityChange(e) {
-        var id = e.componentId, config = this.data.config;
+        var id = e.componentId;
         if (id === 'werewolf-count') {
-            config.werewolf_count = e.quantity;
+            this.setData({
+                werewolf_count: e.quantity
+            });
         } else if (id === 'village-count') {
-            config.village_count = e.quantity;
+            this.setData({
+                village_count: e.quantity
+            });
         }
-        this.setData({
-            config
-        });
     },
 
     handleZanSwitchChange(e) {
@@ -98,6 +100,11 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
     },
 
     submit() {
+        var config = this.data.config;
+        console.log(this.data);
+        config.roles = getSelectedRoles(this.data);
+        console.log(config.roles);
+        return;
         if (!this.data.room) {
             requestRoomId(this.data.config).then(id => {
                 wx.navigateTo({
@@ -116,6 +123,26 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
     }
 }));
 
+const getSelectedRoles = data => {
+    var roles = [], i, skilled_werewolf_count = 0, role;
+    for (i = 0; i < data.village_count; i++) {
+        roles.push(app.globalData.engine.roles.village.name);
+    }
+    for (i = 0; i < data.roles.length; i++) {
+        role = data.roles[i];
+        if (role.selected) {
+            roles.push(role.name)
+            if (role.campus === "werewolf" && !role.required) {
+                skilled_werewolf_count++;
+            }
+        }
+    }
+    for (i = 0; i < data.werewolf_count - skilled_werewolf_count; i++) {
+        roles.push(app.globalData.engine.roles.werewolf.name);
+    }
+    return roles;
+};
+
 const requestRoomId = function (config) {
     return new Promise((resolve, reject) => {
         resolve(3421);
@@ -129,45 +156,61 @@ const updateRoom = function (id, config) {
 };
 
 const loadGameConfig = function () {
-    var config = {
-        werewolf_count: 3,
-        village_count: 3,
-        roles: ["prophet", "witch", "hunter"],
-        hasThief: false,
-        witch_self_rescue: true,
-        beauty_deadlove_exile: true,
-        enable_sheriff: true,
-        massacre: false
-    }, roles = ROLES.filter(role => {
-        return role.enabled;
-    }), protoss_count = 0, others_count = 0, hasBeauty = false, hasWitch = true, othersEnabled = false;
-    roles.forEach( role => {
-        if (role.campus === 'others') {
-            othersEnabled = true;
+    var engine = app.globalData.engine, ROLES = engine.roles, role, 
+        config = {
+            roles: [ROLES.village.name, ROLES.village.name, ROLES.village.name,
+                ROLES.werewolf.name, ROLES.werewolf.name, ROLES.werewolf.name,
+                ROLES.prophet.name, ROLES.hunter.name],
+            witch_self_rescue: true,
+            beauty_deadlove_exile: true,
+            enable_sheriff: true,
+            massacre: false
+        },
+        roles = [],
+        werewolf_count = 0, village_count = 0, protoss_count = 0, others_count = 0,
+        hasThief = false, hasBeauty = false, hasWitch = true, othersEnabled = false;
+    for (var p in ROLES) {
+        role = ROLES[p];
+        if (config.roles.indexOf(role.name) > -1 && !role.required) {
+            role.selected = true; // TODO: don't modify the data in app.globalData.engine
         }
-        if (config.roles.indexOf(role.name) > -1) {
-            role.selected = true;
-            if (role.campus === "people") {
-                protoss_count++;
-            } else if (role.campus === "others") {
-                others_count++;
-            }
-            if (role.name === "witch") {
-                hasWitch = true;
-            } else if (role.name === "beauty_werewolf") {
+        roles.push(role);
+    }
+    for (var i = 0; i < config.roles.length; i++) {
+        role = ROLES[config.roles[i]];
+        if (role.campus === 'werewolf') {
+            werewolf_count++;
+            if (role.name === 'beauty_werewolf') {
                 hasBeauty = true;
             }
+        } else if (role.campus === 'people') {
+            if (role.name === 'village') {
+                village_count++;
+            } else {
+                protoss_count++;
+            }
+            if (role.name === 'witch') {
+                hasWitch = true;
+            }
         } else {
-            role.selected = false;
+            others_count++;
+            othersEnabled = true;
+            if (role.name === "thief") {
+                hasThief = true;
+            }
         }
-    } );
+    }
     return {
         config,
         roles,
+        hasThief,
         hasBeauty,
         hasWitch,
         othersEnabled,
         protoss_count,
-        others_count
+        others_count,
+        werewolf_count,
+        village_count,
+        protoss_count
     };
 };

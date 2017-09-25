@@ -1,6 +1,7 @@
 <view class="container">
     <view class="welcome">
-        <text class="title">欢迎来到PinoKill俱乐部</text>
+        <view class="title">欢迎使用PinoKill俱乐部</view>
+        <view class="title">面杀辅助系统</view>
     </view>
     <view class="userinfo" wx:if="{{!!userInfo.nickName}}">
         <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover"></image>

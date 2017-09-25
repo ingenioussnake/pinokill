@@ -3,7 +3,7 @@ const qcloud = require('../../vendor/wafer2-client-sdk/index');
 const config = require('../../config');
 
 const ROLES = require("../../roles");
-const UserUtils = require("../../utils/UserUtils");
+const GameUtils = require("../../utils/GameUtils");
 const app = getApp();
 
 Page({
@@ -16,15 +16,19 @@ Page({
         role: {},
         started: false,
         dead: false,
-        messages: [],
+        werewolf_count: 0,
+        village_count: 0,
         special_werewolves: [],
         special_roles: [],
         protoss: [],
+        hasThief: false,
         hasWitch: true,
         hasBeauty: false,
-        enableSetting: false
+        enableSetting: false,
+        messages: []
     },
     onLoad(options) {
+        GameUtils.assert();
         if (!options.id) {
             options.id = 2312; //TODO: validate instead of hard coded
         }
@@ -35,8 +39,9 @@ Page({
             id: options.id
         });
     },
-    onReady() {
-        if (!this.data.config && this.data.seats.length === 0) {
+    onShow() {
+        if (app.globalData.userInfo && app.globalData.engine &&
+            !this.data.config && this.data.seats.length === 0) {
             initRoom().then( data => {
                 this.setData(data);
             });
@@ -48,11 +53,13 @@ Page({
             moveTo(this.data.seat, index).then((change)=>{
                 var old = change.old, now = change.now;
                 var seats = this.data.seats, seat = this.data.seat;
-                seats[now].user = seats[old].user;
-                seats[old].user = null;
-                if (seat === old) {
-                    seat = now;
+                if (old !== null) {
+                    seats[now].user = seats[old].user;
+                    seats[old].user = null;
+                } else {
+                    seats[now].user = app.globalData.userInfo;
                 }
+                seat = now; //TODO: others move?
                 this.setData({seats, seat});
             });
         }
@@ -61,33 +68,45 @@ Page({
 
 const initRoom = function () {
     return new Promise((resolve, reject) => {
-        var userInfo = app.globalData.userInfo; //TODO: not login?
+        var userInfo = app.globalData.userInfo,
+            ROLES = app.globalData.engine.roles,
         //TODO: return config when the tunnel is established.
-        var config = {
-            werewolf_count: 3,
-            village_count: 3,
-            roles: ["prophet", "witch", "hunter"],
-            hasThief: false,
-            witch_self_rescue: true,
-            beauty_deadlove_exile: true,
-            enable_sheriff: true
-        },
-        special_werewolves = [], special_roles = [], protoss = [],
-        seats = config.werewolf_count + config.village_count,
-        roles = ROLES.filter( (role) => { return role.enabled }),
-        campus;
-        for (var i = 0; i < roles.length; i++) {
-            if (config.roles.indexOf(roles[i].name) > -1) {
-                campus = roles[i].campus;
-                if (campus === "werewolf") {
-                    special_werewolves.push(roles[i].label);
+            config = {
+                roles: [ROLES.village.name, ROLES.village.name, ROLES.village.name,
+                    ROLES.werewolf.name, ROLES.werewolf.name, ROLES.werewolf.name,
+                    ROLES.prophet.name, ROLES.hunter.name, ROLES.witch.name],
+                witch_self_rescue: true,
+                beauty_deadlove_exile: true,
+                enable_sheriff: true,
+                massacre: false
+            },
+            werewolf_count = 0, village_count = 0,
+            hasThief = false, hasBeauty = false, hasWitch = false, othersEnabled = false,
+            special_werewolves = [], special_roles = [], protoss = [],
+            seats = config.roles.length, campus, role;
+        for (var i = 0; i < seats; i++) {
+            role = ROLES[config.roles[i]];
+            if (role.campus === 'werewolf') {
+                werewolf_count++;
+                if (!role.required) {
+                    special_werewolves.push(role.label);
+                }
+                if (role.name === 'beauty_werewolf') {
+                    hasBeauty = true;
+                }
+            } else if (role.campus === 'people') {
+                if (!role.required) {
+                    protoss.push(role.label);
                 } else {
-                    seats++;
-                    if (campus === 'people') {
-                        protoss.push(roles[i].label);
-                    } else {
-                        special_roles.push(roles[i].label);
-                    }
+                    village_count++;
+                }
+                if (role.name === 'witch') {
+                    hasWitch = true;
+                }
+            } else {
+                special_roles.push(role.label);
+                if (role.name === 'thief') {
+                    hasThief = true;
                 }
             }
         }
@@ -96,18 +115,15 @@ const initRoom = function () {
             if (!seats[i]) {
                 seats[i] = {
                     index: i + 1,
-                    user: null
+                    user: null,
+                    role: {},
+                    dead: false
                 };
             }
         }
-        seats[5].user = {
-            avatarUrl: userInfo.avatarUrl,
-            nickName: userInfo.nickName
-        };
         resolve({
-            host: true, config, seats, seat: 5, special_werewolves, special_roles, protoss,
-            hasWitch: config.roles.indexOf("witch") > -1,
-            hasBeauty: config.roles.indexOf("beauty_werewolf") > -1
+            host: true, config, seats, special_werewolves, special_roles, protoss,
+            werewolf_count, village_count, hasThief, hasBeauty, hasWitch
         });
     });
 };

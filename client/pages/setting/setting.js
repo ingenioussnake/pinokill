@@ -1,3 +1,5 @@
+const qcloud = require('../../vendor/wafer2-client-sdk/index');
+const config = require('../../config');
 const Zan = require("../../vendor/zanui/index");
 
 const app = getApp();
@@ -101,23 +103,20 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
 
     submit() {
         var config = this.data.config;
-        console.log(this.data);
         config.roles = getSelectedRoles(this.data);
-        console.log(config.roles);
-        return;
         if (!this.data.room) {
-            requestRoomId(this.data.config).then(id => {
+            createRoom(this.data.config).then(id => {
                 wx.navigateTo({
                     url: '/pages/room/room?id=' + id
                 });
-            });
+            }, error => console.log(error));
         } else {
             updateRoom(this.data.room, this.data.config).then(() => {
                 console.log(app.getCurrentPages());
                 wx.navigateBack({
                     delta: 1
                 });
-            });
+            }, error => console.log(error));
         }
         
     }
@@ -143,9 +142,17 @@ const getSelectedRoles = data => {
     return roles;
 };
 
-const requestRoomId = function (config) {
+const createRoom = function (data) {
     return new Promise((resolve, reject) => {
-        resolve(3421);
+        qcloud.request({
+            url: config.service.roomUrl,
+            method: 'PUT',
+            data: data,
+            success: (res) => wx.navigateTo({
+                url: '/pages/room/room?id=' + res.data,
+            }),
+            fail: (error) => console.log(error)
+        });
     });
 };
 
@@ -157,16 +164,7 @@ const updateRoom = function (id, config) {
 
 const loadGameConfig = function () {
     var engine = app.globalData.engine, ROLES = engine.roles, role, 
-        config = {
-            roles: [ROLES.village.name, ROLES.village.name, ROLES.village.name,
-                ROLES.werewolf.name, ROLES.werewolf.name, ROLES.werewolf.name,
-                ROLES.prophet.name, ROLES.hunter.name],
-            witch_self_rescue: true,
-            beauty_deadlove_exile: true,
-            enable_sheriff: true,
-            massacre: false
-        },
-        roles = [],
+        config = DEFAULT_CONFIG, roles = [],
         werewolf_count = 0, village_count = 0, protoss_count = 0, others_count = 0,
         hasThief = false, hasBeauty = false, hasWitch = true, othersEnabled = false;
     for (var p in ROLES) {
@@ -213,4 +211,22 @@ const loadGameConfig = function () {
         village_count,
         protoss_count
     };
+};
+
+const DEFAULT_CONFIG = {
+    roles: [
+        app.globalData.engine.roles.village.name,
+        app.globalData.engine.roles.village.name,
+        app.globalData.engine.roles.village.name,
+        app.globalData.engine.roles.werewolf.name,
+        app.globalData.engine.roles.werewolf.name,
+        app.globalData.engine.roles.werewolf.name,
+        app.globalData.engine.roles.prophet.name,
+        app.globalData.engine.roles.hunter.name,
+        app.globalData.engine.roles.witch.name
+    ],
+    witch_self_rescue: true,
+    beauty_deadlove_exile: true,
+    enable_sheriff: true,
+    massacre: false
 };

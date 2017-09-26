@@ -15,17 +15,11 @@ var config = {
 
         requestUrl: `${host}/pinokill/user`,
 
-        versionUrl: `${host}/pinokill/version`,
-
         engineUrl: `${host}/pinokill/engine`,
 
-        roomUrl: `${host}/pinokill/room`,
+        versionUrl: `${host}/pinokill/engine/version`,
 
-        seatUrl: `${host}/pinokill/seat`,
-
-        gameUrl: `${host}/pinokill/game`,
-
-        actionUrl: `${host}/pinokill/action`,
+        roomUrl: `${host}/pinokill/room`
     }
 };
 

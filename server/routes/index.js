@@ -18,26 +18,36 @@ router.get('/user', validationMiddleware, controllers.user)
 
 // --- 房间操作 --- //
 // 创建房间，返回房间id /pinokill/room
-router.put('/room', controllers.room.create)
-// 进入房间，放回房间配置及座位及状态 /pinokill/room/:rid
-router.get('/room/:rid', controllers.room.join)
-// 修改房间配置 /pinokill/room/:rid
-router.put('/room/:rid', controllers.room.update)
-// 退出房间 /pinokill/room/:rid
-router.delete('/room/:rid', controllers.room.quit)
-// 退出房间 /pinokill/seat/:rid
-router.post('/seat/:rid', controllers.room.sit)
+router.put('/room', validationMiddleware, controllers.room.create)
+// 加入房间，返回房间id /pinokill/room/:id
+router.put('/room/:id', validationMiddleware, controllers.room.join)
+// 修改房间，返回房间id /pinokill/room/:id
+router.post('/room/:id', validationMiddleware, controllers.room.update)
 
-// --- 游戏操作 --- //
-// 获取引擎版本 /pinokill/version
-router.get('/version', controllers.game.getEngineVersion)
+// 房间操作通过tunnel维护，路由只需get and post
+router.get('/room', controllers.room.get)
+router.post('/room', controllers.room.post)
+// post 包含的操作
+  // 进入房间，放回房间配置及座位及状态 /pinokill/room/:rid
+    // router.get('/room/:rid', controllers.room.join) // tunnel connect
+// 修改房间配置 /pinokill/room/:rid
+    //router.put('/room/:rid', controllers.room.update) // tunnel post config
+// 退出房间 /pinokill/room/:rid
+    // router.delete('/room/:rid', controllers.room.quit) // tunnel close
+// 退出房间 /pinokill/seat/:rid
+    // router.post('/seat/:rid', controllers.room.sit) // tunnel post seat
+// 开始游戏 /pinokill/game
+    // router.put('/game', controllers.game.start) // tunnel post game start
+// 结束游戏 /pinokill/game
+    // router.delete('/game', controllers.game.end) // tunnel post game end
+// 游戏数据
+    // router.post('/action', controllers.game.action) // tunnel post game action
+
+// --- 游戏版本更新 --- //
 // 获取引擎 /pinokill/engine
 router.get('/engine', controllers.game.getEngine)
-// 开始游戏 /pinokill/game
-router.put('/game', controllers.game.start)
-// 结束游戏 /pinokill/game
-router.delete('/game', controllers.game.end)
-// 游戏数据
-router.post('/action', controllers.game.action)
+// 获取引擎版本 /pinokill/version
+router.get('/engine/version', controllers.game.getEngineVersion)
+
 
 module.exports = router

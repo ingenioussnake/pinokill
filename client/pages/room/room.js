@@ -4,11 +4,14 @@ const config = require('../../config');
 
 const ROLES = require("../../roles");
 const GameUtils = require("../../utils/GameUtils");
+const Tips = require("../../utils/TipsUtils");
 const app = getApp();
 
 Page({
     data: {
         id: null,
+        busy: true,
+        error: false,
         host: false,
         config: null,
         seats: [],
@@ -30,14 +33,30 @@ Page({
     onLoad(options) {
         GameUtils.assert();
         if (!options.id) {
-            options.id = 2312; //TODO: validate instead of hard coded
+            Tips.showModel("加入房间失败", "没有房间号");
+            this.setData({busy: false, error: true});
+        } else {
+            wx.setNavigationBarTitle({
+                title: '房间' + options.id,
+            });
+            this.setData({
+                id: options.id
+            });
+            this.join().then(res => {
+                console.log(res);
+                this.setData({
+                    busy: false,
+                    error: false
+                })
+            }, error => {
+                Tips.showModel("加入房间失败", "房间号不合法");
+                console.log(error);
+                this.setData({
+                    busy: false,
+                    error: true
+                })
+            })
         }
-        wx.setNavigationBarTitle({
-            title: '房间' + options.id,
-        });
-        this.setData({
-            id: options.id
-        });
     },
     onShow() {
         if (app.globalData.userInfo && app.globalData.engine &&
@@ -46,6 +65,31 @@ Page({
                 this.setData(data);
             });
         }
+    },
+    onUnload() {
+        this.quit();
+    },
+    join() {
+        return new Promise((resolve, reject) => {
+            if (!this.data.id) {
+                reject("没有房间号");
+            }
+            var game = this.game = new qcloud.Tunnel(config.service.roomUrl);
+            game.on('connect', () => {
+                console.log('connected');
+            });
+            game.on('close', () => console.log('closed'));
+            game.on('error', () => console.log('error'));
+            game.on('reconnect', () => console.log('reconnected'));
+            game.on('reconnecting', () => console.log('reconnecting'));
+            game.on('join', room => {
+                resolve(room);
+            });
+            game.on('people', () => console.log('people'));
+            game.on('seat', () => console.log('seat'));
+            game.on('action', () => console.log('action'));
+            game.open();
+        });
     },
     sit(e) {
         var index = e.currentTarget.dataset.index, seat = this.data.seat;
@@ -62,6 +106,11 @@ Page({
                 seat = now; //TODO: others move?
                 this.setData({seats, seat});
             });
+        }
+    },
+    quit() {
+        if (this.game) {
+            this.game.close();
         }
     }
 });

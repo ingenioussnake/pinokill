@@ -1,5 +1,6 @@
 /* pages/room/room.wxss */
 @import './seat.wxss';
+@import '../../vendor/weui/style/weui.wxss';
 page {
     width: calc(100% - 20rpx);
     height: calc(100% - 20rpx);

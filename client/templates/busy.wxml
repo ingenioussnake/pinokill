@@ -1,0 +1,3 @@
+<template name="busy-mask">
+  <view class="busy-mask" />
+</template>

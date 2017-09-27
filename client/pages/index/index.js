@@ -14,16 +14,25 @@ Page({
      * 初始数据，我们把服务地址显示在页面上
      */
     data: {
+        busy: true,
         userInfo: {},
         room_number: 1234
     },
 
     onLoad() {
-        GameUtils.assert();
-    },
-
-    onShow() {
-        this.setData({ userInfo: app.globalData.userInfo });
+        GameUtils.assert().then( () => {
+            this.setData({
+                busy: false,
+                userInfo: app.globalData.userInfo
+            });
+        }).catch( error => {
+            console.log(error.type, error.error);
+            Tips.showModel("游戏初始化失败", "请重试", () => {
+                wx.redirectTo({
+                    url: '/pages/login/login?callback=' + this.route
+                });
+            });
+        });
     },
 
     joinRoom() {

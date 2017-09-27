@@ -17,8 +17,6 @@ var config = {
 
         engineUrl: `${host}/pinokill/engine`,
 
-        versionUrl: `${host}/pinokill/engine/version`,
-
         roomUrl: `${host}/pinokill/room`
     }
 };

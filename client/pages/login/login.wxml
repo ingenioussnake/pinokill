@@ -2,10 +2,7 @@
     <view class="welcome">
         <text class="title">欢迎来到PinoKill俱乐部</text>
     </view>
-    <view class="login" wx:if="{{!!user_error}}">
-        <button type="primary" bindtap='doLogin'>登录</button>
-    </view>
-    <view class="login" wx:if="{{!!engine_error}}">
-        <button type="default" bindtap='updateEngine'>更新</button>
+    <view class="login" wx:if="{{!!error}}">
+        <button type="primary" bindtap='init'>登录</button>
     </view>
 </view>

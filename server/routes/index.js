@@ -46,8 +46,6 @@ router.post('/room', controllers.room.post)
 // --- 游戏版本更新 --- //
 // 获取引擎 /pinokill/engine
 router.get('/engine', controllers.game.getEngine)
-// 获取引擎版本 /pinokill/version
-router.get('/engine/version', controllers.game.getEngineVersion)
 
 
 module.exports = router

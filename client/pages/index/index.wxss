@@ -1,4 +1,5 @@
 /**index.wxss**/
+@import '../../templates/busy.wxss';
 .welcome {
     display: flex;
     align-items: center;

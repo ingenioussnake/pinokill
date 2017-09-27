@@ -1,8 +1,12 @@
 module.exports = {
-    getEngineVersion: ctx => {
-        ctx.body = ctx.app.__game_engine__.version
-    },
     getEngine: ctx => {
-        ctx.body = ctx.app.__game_engine__
+        const version = ctx.request.body,
+              engine = ctx.app.__game_engine__
+        if (version === engine.version) {
+            ctx.state.code = 208
+        } else {
+            ctx.state.code = 200;
+            ctx.state.data = ctx.app.__game_engine__
+        }
     }
 }

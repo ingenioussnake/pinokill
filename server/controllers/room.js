@@ -4,6 +4,8 @@ const debug = require('debug')('koa-weapp-demo')
 
 const userMap = {}
 const roomMap = {}
+
+const $getRoomTunnels = room => room.getAllPeople().filter( person => !!person ).map( person => person.tunnelId)
 /**
  * 调用 tunnel.broadcast() 进行广播
  * @param  {String} type    消息类型
@@ -25,7 +27,7 @@ const $broadcast = (targets, type, content) => {
                     delete userMap[tunnelId]
                 })
             }
-        })
+        }).catch( e => console.log(`[onBroadcastError] =>`, e))
 }
 
 /**
@@ -45,12 +47,12 @@ function onConnect (tunnelId) {
     console.log(`[onConnect] =>`, { tunnelId })
 
     if (tunnelId in userMap) {
-        var user = userMap[tunnelId],
+        const user = userMap[tunnelId],
             room = roomMap[user.openId]
         $broadcast([tunnelId], 'join', room)
-        room.addPlayer(user, tunnelId)
+        room.in(user, tunnelId)
 
-        $broadcast(room.players.map( player => player.tunnelId), 'people', {
+        $broadcast($getRoomTunnels(room), 'people', {
             'enter': user
         })
     } else {
@@ -67,21 +69,23 @@ function onConnect (tunnelId) {
  */
 function onMessage (tunnelId, type, content) {
     console.log(`[onMessage] =>`, { tunnelId, type, content })
+    if (tunnelId in userMap) {
+        const user = userMap[tunnelId],
+            room = roomMap[user.openId]
+        switch (type) {
+            case 'seat':
+                    const version = room.sit(user.openId, content.to)
+                    version && $broadcast($getRoomTunnels(room), 'seat', {
+                        'version': version,
+                        'seats': room.players
+                    })
+                break
 
-    switch (type) {
-        case 'speak':
-            if (tunnelId in userMap) {
-                $broadcast('speak', {
-                    'who': userMap[tunnelId],
-                    'word': content.word
-                })
-            } else {
-                $close(tunnelId)
-            }
-            break
-
-        default:
-            break
+            default:
+                break
+        }
+    } else {
+        $close(tunnelId)
     }
 }
 
@@ -102,11 +106,11 @@ function onClose (tunnelId) {
     const leaveUser = userMap[tunnelId]
     delete userMap[tunnelId]
     const room = roomMap[leaveUser.openId]
-    room.removePlayer(tunnelId)
+    room.out(leaveUser.openId)
 
     // 聊天室没有人了（即无信道ID）不再需要广播消息
-    if (room.players.length > 0) {
-        $broadcast('people', {
+    if (room.getAllPeople().length > 0) {
+        $broadcast($getRoomTunnels(room), 'people', {
             'leave': leaveUser
         })
     } else {

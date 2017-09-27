@@ -8,7 +8,7 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
     data: {
         config: {},
         roles: [],
-        room: null,
+        room: null, 
         status: [false, false, false, false, false],
         werewolf_count: 0,
         protoss_count: 0,
@@ -149,7 +149,7 @@ const createRoom = function (data) {
             method: 'PUT',
             data: data,
             success: (res) => wx.navigateTo({
-                url: '/pages/room/room?id=' + res.data,
+                url: '/pages/room/room?id=' + res.data.data,
             }),
             fail: (error) => console.log(error)
         });
@@ -164,7 +164,7 @@ const updateRoom = function (id, config) {
 
 const loadGameConfig = function () {
     var engine = app.globalData.engine, ROLES = engine.roles, role, 
-        config = DEFAULT_CONFIG, roles = [],
+        config = getDefaultConfig(), roles = [],
         werewolf_count = 0, village_count = 0, protoss_count = 0, others_count = 0,
         hasThief = false, hasBeauty = false, hasWitch = true, othersEnabled = false;
     for (var p in ROLES) {
@@ -213,20 +213,22 @@ const loadGameConfig = function () {
     };
 };
 
-const DEFAULT_CONFIG = {
-    roles: [
-        app.globalData.engine.roles.village.name,
-        app.globalData.engine.roles.village.name,
-        app.globalData.engine.roles.village.name,
-        app.globalData.engine.roles.werewolf.name,
-        app.globalData.engine.roles.werewolf.name,
-        app.globalData.engine.roles.werewolf.name,
-        app.globalData.engine.roles.prophet.name,
-        app.globalData.engine.roles.hunter.name,
-        app.globalData.engine.roles.witch.name
-    ],
-    witch_self_rescue: true,
-    beauty_deadlove_exile: true,
-    enable_sheriff: true,
-    massacre: false
+const getDefaultConfig = () => {
+    return {
+        roles: [
+            app.globalData.engine.roles.village.name,
+            app.globalData.engine.roles.village.name,
+            app.globalData.engine.roles.village.name,
+            app.globalData.engine.roles.werewolf.name,
+            app.globalData.engine.roles.werewolf.name,
+            app.globalData.engine.roles.werewolf.name,
+            app.globalData.engine.roles.prophet.name,
+            app.globalData.engine.roles.hunter.name,
+            app.globalData.engine.roles.witch.name
+        ],
+        witch_self_rescue: true,
+        beauty_deadlove_exile: true,
+        enable_sheriff: true,
+        massacre: false
+    };
 };

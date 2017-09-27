@@ -19,6 +19,7 @@ page {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    overflow-y: auto;
 }
 
 .right-seats {
@@ -37,7 +38,7 @@ page {
 }
 
 /* game configuration */
-.game-config {
+.game-config.center {
     display: flex;
     flex-direction: column;
     justify-content: space-around;

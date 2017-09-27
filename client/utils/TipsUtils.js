@@ -9,13 +9,14 @@ const showSuccess = text => wx.showToast({
     icon: 'success'
 });
 
-const showModel = (title, content) => {
+const showModel = (title, content, success) => {
     wx.hideToast();
 
     wx.showModal({
         title,
         content: JSON.stringify(content),
-        showCancel: false
+        showCancel: false,
+        success: res => res.confirm && success && success()
     });
 };
 

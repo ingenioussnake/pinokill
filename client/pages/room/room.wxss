@@ -34,7 +34,8 @@ page {
 }
 
 .content {
-    flex-grow: 1
+    flex-grow: 1;
+    overflow-y: auto;
 }
 
 /* game configuration */
@@ -60,4 +61,17 @@ page {
 
 .actions button {
     margin-top: 10rpx;
+}
+
+/* messages */
+
+.system-message {
+    font-size: 14px;
+    line-height: 14px;
+    color: #fff;
+    background: #cecece;
+    border-radius: 4px;
+    display: inline-block;
+    padding: 8rpx 15rpx;
+    margin: 30rpx 0 10rpx;
 }

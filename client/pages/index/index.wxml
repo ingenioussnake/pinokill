@@ -10,7 +10,9 @@
         <text class="userinfo-nickname">{{userInfo.nickName}}</text>
     </view>
     <view class="room-actions" wx:if="{{!!userInfo.nickName}}">
-        <navigator url="/pages/setting/setting?type=create"><button type="primary">创建房间</button></navigator>
+        <view class="create-room">
+            <button type="primary" bindtap='createRoom'>创建房间</button>
+        </view>
         <view class="join-room">
             <input maxlength='4' value='{{room_number}}' /><button bindtap='joinRoom'>加入房间</button>
         </view>

@@ -10,34 +10,31 @@
     <view wx:if="{{!error}}" class="container">
         <view class="left-seats">
             <block wx:for="{{seats}}" wx:key="index">
-                <template wx:if="{{index < halfbreak}}" is="seat" data="{{index: item.index, self: index === seat, ...item.user}}" bindtap="sit"/>
+                <template wx:if="{{index < halfbreak}}" is="seat" data="{{index: item.index, self: index === seat, ...item.userInfo}}" bindtap="sit"/>
             </block>
         </view>
         <view class="main">
             <scroll-view scroll-y class="content">
-                <view class="game-config {{messages.length === 0 ? 'center' : ''}}">
+                <view class="game-config">
                     <view class="config-container">
                         <view class="config-title">游戏配置</view>
-                        <view class="config-description">
-                            <text>狼人{{werewolf_count}}名</text>
-                            <block wx:if="{{special_werewolves.length > 0}}">
-                                <text>(包含</text>
-                                <text wx:for="{{special_werewolves}}" wx:key="*this">{{item}} </text>
-                                <text>)</text>
-                            </block>
+                        <view wx:for="{{description}}" wx:key="*this" class="config-description">
+                            <text>{{item}}</text>
                         </view>
-                        <view class="config-description">村民{{village_count + (hasThief ? 2 : 0)}}名</view>
-                        <view class="config-description config-list">神民：<text wx:for="{{protoss}}" wx:key="*this">{{item}}, </text></view>
-                        <view class="config-description config-list" wx:if="{{special_roles.length > 0}}">其他角色：<text wx:for="{{special_roles}}" wx:key="*this">{{item}}, </text></view>
-                        <view class="config-description">
-                            <text>屠{{config.massacre ? '城' : '边'}}, </text>
-                            <text>{{config.enable_sheriff ? '' : '没'}}有警长</text>
-                        </view>
-                        <view class="config-description" wx:if="{{hasWitch}}">女巫首夜{{config.witch_self_rescue ? '' : '不'}}允许自救</view>
-                        <view class="config-description" wx:if="{{hasBeauty}}">狼美人{{config.beauty_deadlove_exile ? '仅被放逐才' : '死亡即可'}}殉情</view>
                     </view>
                 </view>
-                <view class="game-logs" wx:if="{{messages.length > 0}}"></view>
+                <view wx:for="{{messages}}" wx:for-item="message" wx:key="id" id="{{message.id}}" class="message {{message.type}}">
+                    <!-- <view wx:if="{{message.type == 'speak'}}" class="user-message {{message.isMe ? 'me' : 'other'}}">
+                        <image class="avatar" src="{{message.user.avatarUrl}}" mode="aspectFill"></image>
+                        <view class="text">
+                            <view class="nickname">{{message.user.nickName}}</view>
+                            <view class="content">{{message.content}}</view>
+                        </view>
+                    </view> -->
+                    <view wx:if="{{message.type == 'system'}}" class="system-message">
+                        {{message.content}}
+                    </view>
+                </view>
             </scroll-view>
             <view class="actions" wx:if="{{!started}}">
                 <view class="invite">
@@ -51,7 +48,7 @@
         </view>
         <view class="right-seats">
             <block wx:for="{{seats}}" wx:key="index">
-                <template wx:if="{{index >= halfbreak}}" is="seat" data="{{index: item.index, self: index === seat, ...item.user}}" bindtap="sit"/>
+                <template wx:if="{{index >= halfbreak}}" is="seat" data="{{index: item.index, self: index === seat, ...item.userInfo}}" bindtap="sit"/>
             </block>
         </view>
     </view>

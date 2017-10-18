@@ -102,16 +102,19 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
     },
 
     submit() {
-        var config = this.data.config;
+        const config = this.data.config;
         config.roles = getSelectedRoles(this.data);
+        const data = { config };
+        data.size = config.roles.length;
+        data.type = 'werewolf';
         if (!this.data.room) {
-            createRoom(this.data.config).then(id => {
+            createRoom(data).then(id => {
                 wx.navigateTo({
                     url: '/pages/room/room?id=' + id
                 });
             }, error => console.log(error));
         } else {
-            updateRoom(this.data.room, this.data.config).then(() => {
+            updateRoom(this.data.room, data).then(() => {
                 console.log(app.getCurrentPages());
                 wx.navigateBack({
                     delta: 1

@@ -35,6 +35,18 @@ Page({
         });
     },
 
+    createRoom() {
+        wx.showActionSheet({
+            itemList: ['狼人杀', '阿瓦隆'],
+            success: function (res) {
+                if (res.tapIndex === undefined) return;
+                wx.navigateTo({
+                    url: '/pages/setting/' + (res.tapIndex === 0 ? 'werewolf' : 'avalon')
+                });
+            }
+        })
+    },
+
     joinRoom() {
         var id = String(this.data.room_number);
         requestRoom(id).then(() => {

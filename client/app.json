@@ -3,7 +3,8 @@
         "pages/index/index",
         "pages/room/room",
         "pages/login/login",
-        "pages/setting/setting"
+        "pages/setting/werewolf",
+        "pages/setting/avalon"
     ],
     "window": {
         "backgroundTextStyle": "light",

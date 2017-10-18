@@ -13,24 +13,16 @@ Page({
         busy: true,
         error: 0,
         host: false,
-        config: null,
         seats: [],
         seatVersion: -1,
         halfbreak: 0,
-        seat: null,
-        role: {},
-        started: false,
-        dead: false,
-        werewolf_count: 0,
-        village_count: 0,
-        special_werewolves: [],
-        special_roles: [],
-        protoss: [],
-        hasThief: false,
-        hasWitch: true,
-        hasBeauty: false,
         enableSetting: false,
-        messages: []
+        messages: [],
+        type: null,
+        game: null,
+        description: [],
+        started: false,
+        
     },
     onLoad(options) {
         console.log(this.route);
@@ -43,22 +35,9 @@ Page({
                 return this.join();
             }).then( res => {
                 console.log(res);
-                this.initRoom({
-                    busy: false,
-                    error: 0,
-                    config: {
-                        roles: res.roles,
-                        enable_sheriff: res.enable_sheriff,
-                        witch_self_rescue: res.witch_self_rescue,
-                        beauty_deadlove_exile: res.beauty_deadlove_exile,
-                        massacre: res.massacre
-                    },
-                    seats: res.players,
-                    seat_version: res.seat_version,
-                    messages: res.messages.map( createMessage ),
-                    started: res.started,
-                    host: res.host === app.globalData.userInfo.openId
-                });
+                res.type = 'werewolf';
+                this.initRoom(res);
+                this.initGame(res.type, res.game);
             }).catch( error => {
                 console.log(error.type, error.error);
                 this.onError(error.type === 'room' ? 1 : 2, error.error);
@@ -99,70 +78,60 @@ Page({
             });
             game.on('close', () => console.log('closed'));
             game.on('error', () => console.log('error'));
-            game.on('reconnect', () => console.log('reconnected'));
-            game.on('reconnecting', () => console.log('reconnecting'));
+            game.on('reconnect', () => {
+                console.log('reconnect', arguments);
+                this.addMessage(createSystemMessage("您已重新上线"));
+            });
+            game.on('reconnecting', () => {
+                console.log('reconnecting', arguments);
+                this.addMessage(createSystemMessage("您已掉线，正在重连..."));
+            });
             game.on('join', room => {
                 resolve(room);
             });
             game.on('people', people => this.onPeople(people));
             game.on('seat', seat => this.onSeat(seat));
-            game.on('action', () => console.log('action'));
+            game.on('game', () => console.log('game'));
             game.open();
         });
     },
     initRoom(data) {
-        var ROLES = app.globalData.engine.roles,
-        //TODO: return config when the tunnel is established.
-            config = data.config,
-            werewolf_count = 0, village_count = 0,
-            hasThief = false, hasBeauty = false, hasWitch = false,
-            special_werewolves = [], special_roles = [], protoss = [],
-            seats = data.seats, campus, role;
-        for (var i = 0; i < config.roles.length; i++) {
-            role = ROLES[config.roles[i]];
-            if (role.campus === 'werewolf') {
-                werewolf_count++;
-                if (!role.required) {
-                    special_werewolves.push(role.label);
-                }
-                if (role.name === 'beauty_werewolf') {
-                    hasBeauty = true;
-                }
-            } else if (role.campus === 'people') {
-                if (!role.required) {
-                    protoss.push(role.label);
-                } else {
-                    village_count++;
-                }
-                if (role.name === 'witch') {
-                    hasWitch = true;
-                }
-            } else {
-                special_roles.push(role.label);
-                if (role.name === 'thief') {
-                    hasThief = true;
-                }
-            }
+        var seats = [];
+        for (var i = 0; i < data.size; i++) {
             seats[i] = {
                 index: i + 1,
-                user: seats[i],
-                role: {},
-                dead: false
+                userInfo: null,
+                offline: false
+            }
+            if (data.seats[i]) {
+                seats[i].userInfo = data.seats[i].userInfo
+                seats[i].offline = data.seats[i].offline
             }
         }
-        data.special_roles = special_roles;
-        data.special_werewolves = special_werewolves;
-        data.protoss = protoss;
-        data.werewolf_count = werewolf_count;
-        data.village_count = village_count;
-        data.hasThief = hasThief;
-        data.hasBeauty = hasBeauty;
-        data.hasWitch = hasWitch;
-        data.halfbreak = Math.ceil(seats.length/ 2);
-        this.setData(data)
+        this.setData({
+            busy: false,
+            error: 0,
+            seats: seats,
+            seat_version: data.seat_version,
+            type: data.type,
+            // messages: data.messages.map( createMessage ),
+            started: data.started,
+            host: data.host === app.globalData.userInfo.openId,
+            halfbreak: Math.ceil(seats.length / 2)
+        });
+    },
+    initGame(type, gameInfo) {
+        var game, Game;
+        if (type === 'werewolf') {
+            Game = require("../../games/Werewolf");
+        } else if (type === 'avalon') {
+            Game = require("../../games/Avalon");
+        }
+        if (!!Game) game = new Game(gameInfo);
+        this.setData({ game, description: game.getDescription() });
     },
     sit(e) {
-        var index = e.currentTarget.dataset.index, seat = this.data.seat;
+        var index = e.currentTarget.dataset.index;
         if (this.game && this.game.isActive()) {
             this.game.emit('seat', { to: index });
         } else {
@@ -190,20 +159,44 @@ Page({
         const seats = this.data.seats;
         if (version < change.version) {
             for (var i = 0; i < seats.length; i++) {
-                seats[i].user = !!change.seats[i] ? change.seats[i].userInfo : null;
+                seats[i].userInfo = !!change.seats[i] ? change.seats[i].userInfo : null;
             }
             this.setData({ seat_version: change.version, seats: seats});
         }
     },
     onPeople(people) {
-        console.log('people', people);
-        const messages = this.data.messages;
-        if (people.enter) {
-            messages.push(createSystemMessage(people.enter.nickName + "加入房间"));
-        } else {
-            messages.push(createSystemMessage(people.enter.nickName + "离开房间"));
+        const seats = this.data.seats;
+        const seat = getPersonSeat(people.person, seats);
+        switch (people.type) {
+            case 'enter':
+                this.addMessage(createSystemMessage(people.person.nickName + "加入房间"));
+            break;
+            case 'online':
+                this.addMessage(createSystemMessage(people.person.nickName + "回到房间"));
+                if (seat > -1) {
+                    seats[seat].offline = false;
+                }
+            break;
+            case 'offline':
+                this.addMessage(createSystemMessage(people.person.nickName + "暂时离开房间"));
+                if (seat > -1) {
+                    seats[seat].offline = true;
+                }
+            break;
+            case 'leave':
+                this.addMessage(createSystemMessage(people.person.nickName + "离开房间"));
+                if (seat > -1) {
+                    seats[seat].userInfo = null;
+                    seats[seat].offline = false;
+                }
+            break;
         }
-        this.setData({messages});
+        this.setData({ seats });
+    },
+    addMessage(msg) {
+        const messages = this.data.messages;
+        messages.push(msg);
+        this.setData({ messages });
     },
     quit() {
         if (this.game) {
@@ -217,6 +210,17 @@ Page({
 //         resolve({old, now});
 //     });
 // };
+const getPersonSeat = function (person, seats) {
+    if (!person || !person.openId) {
+        return -1;
+    }
+    for (var i = 0; i < seats.length; i++) {
+        if (seats[i] && seats[i].userInfo && seats[i].userInfo.openId === person.openId) {
+            return i;
+        }
+    }
+    return -1;
+}
 const msgUuid = function() {
     if (!msgUuid.next) {
         msgUuid.next = 0;

@@ -16,7 +16,7 @@ Page({
     data: {
         busy: true,
         userInfo: {},
-        room_number: 1234
+        room_number: 3454
     },
 
     onLoad() {
@@ -49,22 +49,25 @@ Page({
 
     joinRoom() {
         var id = String(this.data.room_number);
-        requestRoom(id).then(() => {
-            wx.navigateTo({
-                url: '/pages/room/room?id=' + id
-            });
-        }, () => {
-            Tips.showModel("失败", "无法进入该房间");
+        qcloud.request({
+            url: config.service.roomUrl + '/' + id,
+            method: 'PUT',
+            success: (res) => {
+                if (res.data.code == 404) {
+                    Tips.showModel("失败", "房间号不存在");
+                } else if (res.data.code == 200) {
+                    wx.navigateTo({
+                        url: '/pages/room/room?id=' + id
+                    });
+                } else {
+                    Tips.showModel("失败", "无法进入该房间");
+                    console.log(res.data.data)
+                }
+            },
+            fail: (error) => {
+                Tips.showModel("失败", "无法进入该房间");
+                console.log(error)
+            }
         });
     }
 });
-
-const requestRoom = function (id) {
-    return new Promise((resolve, reject) => {
-        if (id.length === 4) {
-            resolve();
-        } else {
-            reject();
-        }
-    });
-};

@@ -24,7 +24,7 @@ module.exports = {
         ctx.state.data = room.id
     },
     join: async ctx => {
-        const id = this.params.id
+        const id = ctx.params.id
         ctx.state.code = 404
         ctx.state.data = id
         if (RoomUtils.registerUser(ctx.state.$wxInfo.userinfo.openId, id)) {
@@ -32,7 +32,7 @@ module.exports = {
         }
     },
     update: async ctx => {
-        const id = this.params.id,
+        const id = ctx.params.id,
             config = ctx.request.body
             room = RoomUtils.findById[id]
         ctx.state.code = 404
@@ -82,6 +82,7 @@ module.exports = {
                 break
             case 'close':
                 room.out(userInfo)
+                // TODO: destroy the room if it's empty
                 break
         }
     }

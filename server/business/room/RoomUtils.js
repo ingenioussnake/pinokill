@@ -5,16 +5,15 @@ const Room = require('./Room')
 const create = (config) => {
     const room = new Room(generateRoomId(), config)
     ROOMS[room.id] = room
-    ROOM_MAP[config.host] = room
-    return room;
+    return registerUser(config.host, room.id)
 }
 
 const registerUser = (userId, roomId) => {
-    const room = ROOM_MAP[roomId]
+    const room = ROOMS[roomId]
     if (room) {
         ROOM_MAP[userId] = room
     }
-    return !!room
+    return room
 }
 
 const destroy = id => { delete ROOMS[id] }

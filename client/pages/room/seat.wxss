@@ -1,11 +1,7 @@
 .seat {
     width: 168rpx;
     position: relative;
-    border: 1rpx solid black;
-}
-
-.seat.seat-self {
-    border: 1rpx solid gold;
+    /* border: 1rpx solid black; */
 }
 
 .seat-index {
@@ -13,6 +9,10 @@
     left:0;
     top:0;
     font-size:64rpx;
+}
+
+.seat.seat-self .seat-index {
+    color: gold;
 }
 
 .avatar {
@@ -29,4 +29,5 @@
     overflow:hidden;
     font-size:32rpx;
     text-align:center;
+    display: none;
 }

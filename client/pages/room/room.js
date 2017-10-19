@@ -22,7 +22,7 @@ Page({
         game: null,
         description: [],
         started: false,
-        
+        me: -1
     },
     onLoad(options) {
         console.log(this.route);
@@ -157,11 +157,19 @@ Page({
         console.log('seats', change);
         const version = this.data.seat_version;
         const seats = this.data.seats;
+        let me = -1;
         if (version < change.version) {
             for (var i = 0; i < seats.length; i++) {
-                seats[i].userInfo = !!change.seats[i] ? change.seats[i].userInfo : null;
+                if (!!change.seats[i]) {
+                    seats[i].userInfo = change.seats[i].userInfo;
+                    if (change.seats[i].userInfo.openId == app.globalData.userInfo.openId) {
+                        me = i;
+                    }
+                } else {
+                    seats[i].userInfo = null;
+                }
             }
-            this.setData({ seat_version: change.version, seats: seats});
+            this.setData({ seat_version: change.version, seats: seats, me});
         }
     },
     onPeople(people) {

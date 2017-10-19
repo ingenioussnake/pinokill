@@ -10,7 +10,7 @@
     <view wx:if="{{!error}}" class="container">
         <view class="left-seats">
             <block wx:for="{{seats}}" wx:key="index">
-                <template wx:if="{{index < halfbreak}}" is="seat" data="{{index: item.index, self: index === seat, ...item.userInfo}}" bindtap="sit"/>
+                <template wx:if="{{index < halfbreak}}" is="seat" data="{{index: item.index, self: index === me, ...item.userInfo}}" bindtap="sit"/>
             </block>
         </view>
         <view class="main">
@@ -48,7 +48,7 @@
         </view>
         <view class="right-seats">
             <block wx:for="{{seats}}" wx:key="index">
-                <template wx:if="{{index >= halfbreak}}" is="seat" data="{{index: item.index, self: index === seat, ...item.userInfo}}" bindtap="sit"/>
+                <template wx:if="{{index >= halfbreak}}" is="seat" data="{{index: item.index, self: index === me, ...item.userInfo}}" bindtap="sit"/>
             </block>
         </view>
     </view>

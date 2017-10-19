@@ -1,9 +1,14 @@
 class Game {
     constructor(options) {
         this.players = options.players;
-        this.config = options.config;
+        this.config = this.setConfig(options.config);
         this.started = options.started;
         this.engine = this.loadEngine();
+        this.roles = options.roles;
+    }
+
+    setConfig(config) {
+        return config;
     }
 
     loadEngine() {}

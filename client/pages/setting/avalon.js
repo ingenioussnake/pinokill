@@ -1,66 +1,97 @@
-// pages/setting/avalon.js
-Page({
+const qcloud = require('../../vendor/wafer2-client-sdk/index');
+const config = require('../../config');
+const Zan = require("../../vendor/zanui/index");
 
-  /**
-   * 页面的初始数据
-   */
-  data: {
-  
-  },
+const app = getApp();
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-  
-  },
+Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
+    data: {
+        config: {},
+        size: null,
+        room: null
+    },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-  
-  },
+    onLoad(options) {
+        let config = loadGameConfig();
+        this.setData({ config, room: options.room });
+    },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-  
-  },
+    onReady() {
+        wx.setNavigationBarTitle({ title: '游戏配置' });
+    },
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-  
-  },
+    handleZanSwitchChange(e) {
+        let id = e.componentId, data = this.data, config = data.config, role;
+        switch (id) {
+            case "evil-blind-role":
+                config.evil_blind_role = e.checked;
+                break;
+            case "enable-lake-lady":
+                config.enable_lake_lady = e.checked;
+                break;
+            case "enable-lancelot":
+                config.enable_lancelot = e.checked;
+                break;
+            case "enable-excalibur":
+                config.enable_excalibur = e.checked;
+                break;
+        }
+        this.setData(data);
+    },
 
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-  
-  },
+    submit() {
+        const data = {
+            config: this.data.config,
+            size: this.data.size,
+            type: 'avalon'
+        };
+        if (!this.data.room) {
+            createRoom(data).then(id => {
+                wx.navigateTo({
+                    url: '/pages/room/room?id=' + id
+                });
+            }, error => console.log(error));
+        } else {
+            updateRoom(this.data.room, data).then(() => {
+                console.log(app.getCurrentPages());
+                wx.navigateBack({
+                    delta: 1
+                });
+            }, error => console.log(error));
+        }
+        
+    }
+}));
 
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-  
-  },
+const createRoom = function (data) {
+    return new Promise((resolve, reject) => {
+        qcloud.request({
+            url: config.service.roomUrl,
+            method: 'PUT',
+            data: data,
+            success: (res) => wx.navigateTo({
+                url: '/pages/room/room?id=' + res.data.data,
+            }),
+            fail: (error) => console.log(error)
+        });
+    });
+};
 
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-  
-  },
+const updateRoom = function (id, config) {
+    return new Promise((resolve, reject) => {
+        resolve(id);
+    });
+};
 
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-  
-  }
-})
+const loadGameConfig = function () {
+    return getDefaultConfig();
+};
+
+const getDefaultConfig = () => {
+    return {
+        evil_blind_role: true,
+        enable_lake_lady: true,
+        enable_lancelot: false,
+        enable_excalibur: false
+    };
+};

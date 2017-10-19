@@ -2,7 +2,7 @@
 	"client": "./client",
 	"svr": "./server",
 	"setting": {
-		"urlCheck": false,
+		"urlCheck": true,
 		"es6": true,
 		"postcss": false,
 		"minified": true

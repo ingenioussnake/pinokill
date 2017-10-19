@@ -2,7 +2,6 @@
 const qcloud = require('../../vendor/wafer2-client-sdk/index');
 const config = require('../../config');
 
-const ROLES = require("../../roles");
 const GameUtils = require("../../utils/GameUtils");
 const Tips = require("../../utils/TipsUtils");
 const app = getApp();

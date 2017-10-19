@@ -1,1 +1,106 @@
-/* pages/setting/avalon.wxss */
+/**setting.wxss**/
+@import '../../vendor/weui/style/weui.wxss';
+
+page {
+    background-color: #F8F8F8;
+    font-size: 16px;
+    font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
+}
+.page__hd {
+    padding: 40px;
+}
+.page__bd {
+    padding-bottom: 40px;
+}
+.page__bd_spacing {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.page__ft{
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+.page__title {
+    text-align: left;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.page__title.header-label {
+    flex-grow: 1;
+}
+
+.page__title.header-action {
+    color: green;
+}
+
+.page__desc {
+    margin-top: 5px;
+    color: #888888;
+    text-align: left;
+    font-size: 14px;
+}
+weui-flex {
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center
+}
+
+.weui-cells {
+    margin-top: 0;
+    opacity: 0;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    -webkit-transition: .3s;
+    transition: .3s
+}
+
+.weui-cells:after,.weui-cells:before {
+    display: none
+}
+
+.weui-cells_show {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0)
+}
+
+.weui-cell:before {
+    right: 15px
+}
+
+.game-config__item {
+    margin: 10px 0;
+    background-color: #fff;
+    border-radius: 2px;
+    overflow: hidden
+}
+
+.game-config__item:first-child {
+    margin-top: 0
+}
+
+.game-config__item__hd {
+    padding: 20px;
+    -webkit-transition: opacity .3s;
+    transition: opacity .3s
+}
+
+.game-config__item__hd_show {
+    opacity: .4
+}
+
+.game-config__item__bd {
+    height: 0;
+    overflow: hidden
+}
+
+.game-config__item__bd_show {
+    height: auto
+}
+
+switch {
+    color: gray;
+}

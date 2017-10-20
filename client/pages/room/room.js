@@ -34,7 +34,6 @@ Page({
                 return this.join();
             }).then( res => {
                 console.log(res);
-                res.type = 'werewolf';
                 this.initRoom(res);
                 this.initGame(res.type, res.game);
             }).catch( error => {
@@ -96,7 +95,7 @@ Page({
     },
     initRoom(data) {
         var seats = [];
-        for (var i = 0; i < data.size; i++) {
+        for (var i = 0; i < data.count; i++) {
             seats[i] = {
                 index: i + 1,
                 userInfo: null,
@@ -127,7 +126,7 @@ Page({
             Game = require("../../games/Avalon");
         }
         if (!!Game) game = new Game(gameInfo);
-        this.setData({ game, description: game.getDescription() });
+        this.setData({ game, description: game.getDescriptions() });
     },
     sit(e) {
         var index = e.currentTarget.dataset.index;

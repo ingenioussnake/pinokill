@@ -15,12 +15,12 @@ class Werewolf extends Game {
         }
     }
 
-    getDescription() {
-        return $getDescription(this.roles, this.config, this.engine);
+    getDescriptions() {
+        return $getDescriptions(this.roles, this.config, this.engine);
     }
 }
 
-const $getDescription = (roles, config, engine) => {
+const $getDescriptions = (roles, config, engine) => {
     let ROLES = engine.roles,
         werewolf_count = 0, village_count = 0,
         hasThief = false, hasBeauty = false, hasWitch = false,

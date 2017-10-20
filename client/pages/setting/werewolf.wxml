@@ -96,25 +96,25 @@
                         <view class="weui-cell weui-cell_access weui-cell_switch" wx:if="{{hasWitch}}">
                             <view class="weui-cell__bd">女巫首夜允许自救</view>
                             <view class="weui-cell__ft">
-                                <template is="zan-switch" data="{{ checked: config.witch_self_rescue, componentId: 'witch-self-rescue' }}" />
+                                <template is="zan-switch" data="{{ checked: game.config.witch_self_rescue, componentId: 'witch-self-rescue' }}" />
                             </view>
                         </view>
                         <view class="weui-cell weui-cell_access weui-cell_switch" wx:if="{{hasBeauty}}">
                             <view class="weui-cell__bd">狼美人仅放逐时才触发殉情</view>
                             <view class="weui-cell__ft">
-                                <template is="zan-switch" data="{{ checked: config.beauty_deadlove_exile, componentId: 'beauty-deadlove-exile' }}" />
+                                <template is="zan-switch" data="{{ checked: game.config.beauty_deadlove_exile, componentId: 'beauty-deadlove-exile' }}" />
                             </view>
                         </view>
                         <view class="weui-cell weui-cell_access weui-cell_switch">
                             <view class="weui-cell__bd">支持警长竞选</view>
                             <view class="weui-cell__ft">
-                                <template is="zan-switch" data="{{ checked: config.enable_sheriff, componentId: 'enable-sheriff' }}" />
+                                <template is="zan-switch" data="{{ checked: game.config.enable_sheriff, componentId: 'enable-sheriff' }}" />
                             </view>
                         </view>
                         <view class="weui-cell weui-cell_access weui-cell_switch">
                             <view class="weui-cell__bd">屠城</view>
                             <view class="weui-cell__ft">
-                                <template is="zan-switch" data="{{ checked: config.massacre, componentId: 'massacre' }}" />
+                                <template is="zan-switch" data="{{ checked: game.config.massacre, componentId: 'massacre' }}" />
                             </view>
                         </view>
                     </view>

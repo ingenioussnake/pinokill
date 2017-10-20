@@ -5,6 +5,7 @@ class Game {
         this.started = options.started;
         this.engine = this.loadEngine();
         this.roles = options.roles;
+        this.count = options.count;
     }
 
     setConfig(config) {
@@ -13,7 +14,7 @@ class Game {
 
     loadEngine() {}
 
-    getDescription() {}
+    getDescriptions() {}
 
     start() {}
 

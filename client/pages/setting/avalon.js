@@ -6,14 +6,14 @@ const app = getApp();
 
 Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
     data: {
-        config: {},
-        size: null,
+        game: {},
+        count: null,
         room: null
     },
 
     onLoad(options) {
         let config = loadGameConfig();
-        this.setData({ config, room: options.room });
+        this.setData({ game: config, room: options.room, count: config.count });
     },
 
     onReady() {
@@ -21,10 +21,10 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
     },
 
     handleZanSwitchChange(e) {
-        let id = e.componentId, data = this.data, config = data.config, role;
+        let id = e.componentId, data = this.data, config = data.game.config;
         switch (id) {
             case "evil-blind-role":
-                config.evil_blind_role = e.checked;
+                config.evil_blind_role = !e.checked;
                 break;
             case "enable-lake-lady":
                 config.enable_lake_lady = e.checked;
@@ -39,10 +39,17 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
         this.setData(data);
     },
 
+    handleSliderChange(e) {
+        const data = this.data;
+        data.count = e.detail.value;
+        data.game.count = e.detail.value;
+        this.setData(data);
+    },
+
     submit() {
         const data = {
-            config: this.data.config,
-            size: this.data.size,
+            game: this.data.game,
+            count: this.data.count,
             type: 'avalon'
         };
         if (!this.data.room) {
@@ -84,14 +91,17 @@ const updateRoom = function (id, config) {
 };
 
 const loadGameConfig = function () {
-    return getDefaultConfig();
+    return getDefaultGameOptions();
 };
 
-const getDefaultConfig = () => {
+const getDefaultGameOptions = () => {
     return {
-        evil_blind_role: true,
-        enable_lake_lady: true,
-        enable_lancelot: false,
-        enable_excalibur: false
+        config: {
+            evil_blind_role: true,
+            enable_lake_lady: true,
+            enable_lancelot: false,
+            enable_excalibur: false
+        },
+        count: 7
     };
 };

@@ -12,8 +12,8 @@ class Room {
         this.id = id
         this.host = options.host
         this.type = options.type
-        this.game = createGame(options.type, options.config)
-        this.size = options.size
+        this.game = createGame(options.type, options.game)
+        this.count = options.count
         this.audience = {}
         this.seats = []
         this.seat_version = 0
@@ -101,7 +101,7 @@ class Room {
             id: this.id,
             host: this.host,
             type: this.type,
-            size: this.size,
+            count: this.count,
             game: this.game.getInfo(),
             seats: this.seats,
             seat_version: this.seat_version,
@@ -110,7 +110,7 @@ class Room {
     }
 }
 
-const createGame = (type, config) => {
+const createGame = (type, options) => {
     let game = null, Game = null
     if (type === 'werewolf') {
         Game = require('../game/Werewolf')
@@ -118,7 +118,7 @@ const createGame = (type, config) => {
         Game = require('../game/Avalon')
     }
     if (!!Game) {
-        game = new Game(config)
+        game = new Game(options)
     }
     return game
 }

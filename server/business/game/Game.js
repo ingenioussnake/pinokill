@@ -1,10 +1,12 @@
 class Game {
-    constructor(config) {
-        this.config = this.setConfig(config)
+    constructor(options) {
+        this.config = this.setConfig(options.config)
         this.started = false
         this.players = []
-        this.messages = []
-        this.roles = config.roles
+        this.actions = []
+        this.roles = options.roles
+        this.count = options.count
+        this.winner = null
     }
 
     setConfig(config) {
@@ -16,8 +18,10 @@ class Game {
             config: this.config,
             started: this.started,
             players: this.players,
-            messages: this.messages,
-            roles: this.roles
+            actions: this.actions,
+            roles: this.roles,
+            count: this.count,
+            winner: this.winner
         }
     }
 }

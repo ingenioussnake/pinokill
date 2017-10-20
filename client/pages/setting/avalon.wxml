@@ -5,6 +5,9 @@
             <view class="page__title header-label">游戏总人数</view>
             <view class="page__title header-action" bindtap='submit'>开始</view>
         </view>
+        <view class="count">
+            <slider bindchange="handleSliderChange" min="5" max="10" show-value value="{{count}}"/>
+        </view>
     </view>
     <view class="page__bd page__bd_spacing">
         <view class="game-config">
@@ -15,27 +18,27 @@
                 <view class="game-config__item__bd game-config__item__bd_show">
                     <view class="weui-cells weui-cells_show">
                         <view class="weui-cell weui-cell_access weui-cell_switch">
-                            <view class="weui-cell__bd">坏人互知身份</view>
+                            <view class="weui-cell__bd">邪恶方互知身份</view>
                             <view class="weui-cell__ft">
-                                <template is="zan-switch" data="{{ checked: config.evil_blind_role, componentId: 'evil-blind-role' }}" />
+                                <template is="zan-switch" data="{{ checked: !game.config.evil_blind_role, componentId: 'evil-blind-role' }}" />
                             </view>
                         </view>
                         <view class="weui-cell weui-cell_access weui-cell_switch">
                             <view class="weui-cell__bd">有湖上夫人</view>
                             <view class="weui-cell__ft">
-                                <template is="zan-switch" data="{{ checked: config.enable_lake_lady, componentId: 'enable-lake-lady' }}" />
+                                <template is="zan-switch" data="{{ checked: game.config.enable_lake_lady, componentId: 'enable-lake-lady' }}" />
                             </view>
                         </view>
                         <view class="weui-cell weui-cell_access weui-cell_switch">
                             <view class="weui-cell__bd">有兰斯洛特</view>
                             <view class="weui-cell__ft">
-                                <template is="zan-switch" data="{{ checked: config.enable_lancelot, componentId: 'enable-lancelot' }}" />
+                                <template is="zan-switch" data="{{ checked: game.config.enable_lancelot, componentId: 'enable-lancelot' }}" />
                             </view>
                         </view>
                         <view class="weui-cell weui-cell_access weui-cell_switch">
                             <view class="weui-cell__bd">有王者之剑</view>
                             <view class="weui-cell__ft">
-                                <template is="zan-switch" data="{{ checked: config.enable_excalibur, componentId: 'enable-excalibur' }}" />
+                                <template is="zan-switch" data="{{ checked: game.config.enable_excalibur, componentId: 'enable-excalibur' }}" />
                             </view>
                         </view>
                     </view>

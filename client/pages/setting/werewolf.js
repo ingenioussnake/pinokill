@@ -6,8 +6,8 @@ const app = getApp();
 
 Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
     data: {
-        config: {},
-        roles: [],
+        game: {},
+        roles: [], // available roles
         room: null, 
         status: [false, false, false, false, false],
         werewolf_count: 0,
@@ -21,9 +21,9 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
     },
 
     onLoad(options) {
-        var config = loadGameConfig();
-        config.room = options.room;
-        this.setData(config);
+        const data = loadGameConfig();
+        data.room = options.room;
+        this.setData(data);
     },
 
     onReady() {
@@ -44,7 +44,7 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
     },
 
     handleZanSwitchChange(e) {
-        var id = e.componentId, data = this.data, config = data.config, role;
+        let id = e.componentId, data = this.data, config = data.game.config, role;
         switch (id) {
             case "witch-self-rescue":
                 config.witch_self_rescue = e.checked;
@@ -69,7 +69,7 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
                         data.hasBeauty = e.checked;
                         break;
                     case "thief":
-                        config.hasThief = e.checked;
+                        data.hasThief = e.checked;
                         break;
                 }
                 if (role.campus === 'people') {
@@ -77,9 +77,6 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
                 } else if (role.campus === 'others') {
                     data.others_count += e.checked ? 1 : -1;
                 }
-                config.roles = data.roles.filter( role => {
-                    return role.selected && !role.required;
-                });
                 break;
         }
         this.setData(data);
@@ -102,11 +99,16 @@ Page(Object.assign({}, Zan.Quantity, Zan.Switch, {
     },
 
     submit() {
-        const config = this.data.config;
-        config.roles = getSelectedRoles(this.data);
-        const data = { config };
-        data.size = config.roles.length;
-        data.type = 'werewolf';
+        const roles = getSelectedRoles(this.data);
+        const data = {
+            type: 'werewolf',
+            game: {
+                config: this.data.game.config,
+                roles: roles,
+                count: roles.length
+            },
+            count: roles.length
+        }
         if (!this.data.room) {
             createRoom(data).then(id => {
                 wx.navigateTo({
@@ -166,19 +168,14 @@ const updateRoom = function (id, config) {
 };
 
 const loadGameConfig = function () {
-    var engine = app.globalData.engine, ROLES = engine.roles, role, 
-        config = getDefaultConfig(), roles = [],
+    let game = getDefaultGameOptions(), role = null, roles = Object.assign({}, app.globalData.engine.roles),
         werewolf_count = 0, village_count = 0, protoss_count = 0, others_count = 0,
         hasThief = false, hasBeauty = false, hasWitch = true, othersEnabled = false;
-    for (var p in ROLES) {
-        role = ROLES[p];
-        if (config.roles.indexOf(role.name) > -1 && !role.required) {
-            role.selected = true; // TODO: don't modify the data in app.globalData.engine
+    for (var i = 0; i < game.roles.length; i++) {
+        role = roles[game.roles[i]];
+        if (!role.required) {
+            role.selected = true;
         }
-        roles.push(role);
-    }
-    for (var i = 0; i < config.roles.length; i++) {
-        role = ROLES[config.roles[i]];
         if (role.campus === 'werewolf') {
             werewolf_count++;
             if (role.name === 'beauty_werewolf') {
@@ -202,8 +199,8 @@ const loadGameConfig = function () {
         }
     }
     return {
-        config,
-        roles,
+        game,
+        roles: Object.values(roles),
         hasThief,
         hasBeauty,
         hasWitch,
@@ -216,7 +213,7 @@ const loadGameConfig = function () {
     };
 };
 
-const getDefaultConfig = () => {
+const getDefaultGameOptions = () => {
     return {
         roles: [
             app.globalData.engine.roles.village.name,
@@ -229,9 +226,11 @@ const getDefaultConfig = () => {
             app.globalData.engine.roles.hunter.name,
             app.globalData.engine.roles.witch.name
         ],
-        witch_self_rescue: true,
-        beauty_deadlove_exile: true,
-        enable_sheriff: true,
-        massacre: false
+        config: {
+            witch_self_rescue: true,
+            beauty_deadlove_exile: true,
+            enable_sheriff: true,
+            massacre: false
+        }
     };
 };

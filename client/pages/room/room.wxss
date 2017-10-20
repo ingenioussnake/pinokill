@@ -16,6 +16,7 @@ page {
 .left-seats, .right-seats {
     width: auto;
     flex-grow: 0;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

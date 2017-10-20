@@ -16,7 +16,7 @@ Page({
     data: {
         busy: true,
         userInfo: {},
-        room_number: 3454
+        room_number: 8715
     },
 
     onLoad() {

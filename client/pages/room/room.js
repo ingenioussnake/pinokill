@@ -65,6 +65,12 @@ Page({
             });
         }
     },
+    onShareAppMessage(options) {
+        return {
+            title: '邀你一起玩' + (this.data.type === "werewolf" ? '狼人杀' : '阿瓦隆'),
+            path: this.route + '?id=' + this.data.id
+        }
+    },
     join() {
         return new Promise((resolve, reject) => {
             if (!this.data.id) {
@@ -94,7 +100,7 @@ Page({
         });
     },
     initRoom(data) {
-        var seats = [];
+        const seats = [];
         for (var i = 0; i < data.count; i++) {
             seats[i] = {
                 index: i + 1,

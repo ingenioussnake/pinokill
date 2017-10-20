@@ -38,9 +38,9 @@
             </scroll-view>
             <view class="actions" wx:if="{{!started}}">
                 <view class="invite">
-                    <button>邀请</button>
+                    <button open-type='share'>邀请</button>
                 </view>
-                <view class="host-actions">
+                <view class="host-actions" wx:if="{{host}}">
                     <button wx:if="{{enableSettings}}">设置</button>
                     <button type="primary">开始</button>
                 </view>

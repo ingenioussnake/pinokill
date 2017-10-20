@@ -47,6 +47,10 @@ Page({
         })
     },
 
+    changeRoomNumber(e) {
+        this.setData({ room_number: e.detail.value});
+    },
+
     joinRoom() {
         var id = String(this.data.room_number);
         qcloud.request({

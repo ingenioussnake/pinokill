@@ -14,7 +14,7 @@
             <button type="primary" bindtap='createRoom'>创建房间</button>
         </view>
         <view class="join-room">
-            <input maxlength='4' value='{{room_number}}' /><button bindtap='joinRoom'>加入房间</button>
+            <input maxlength='4' value='{{room_number}}' bindinput="changeRoomNumber" bindconfirm='joinRoom' confirm-type='加入'/><button bindtap='joinRoom'>加入房间</button>
         </view>
     </view>
 </view>

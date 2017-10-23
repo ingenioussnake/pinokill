@@ -6,6 +6,8 @@ class Game {
         this.engine = this.loadEngine();
         this.roles = options.roles;
         this.count = options.count;
+        this.round = -1;
+        this.me = -1;
     }
 
     setConfig(config) {
@@ -16,7 +18,9 @@ class Game {
 
     getDescriptions() {}
 
-    start() {}
+    start(data) {
+        this.started = true;
+    }
 
     next() {}
 

@@ -42,7 +42,7 @@
                 </view>
                 <view class="host-actions" wx:if="{{host}}">
                     <button wx:if="{{enableSettings}}">设置</button>
-                    <button type="primary">开始</button>
+                    <button type="primary" bindtap='start' wx:if="{{ready}}">开始</button>
                 </view>
             </view>
         </view>

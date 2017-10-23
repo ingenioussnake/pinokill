@@ -92,6 +92,22 @@ class Room {
         return person
     }
 
+    start() {
+        for (let i = 0; i < this.seats.length; i++) {
+            if (!this.seats[i]) {
+                /*return */this.service.broadcast('failure', {
+                    'action': 'start',
+                    'data': { 'seats': this.seats, 'version': this.seat_version }
+                }) //TODO: stop starting if the players are not enough
+            }
+        }
+        this.service.broadcast('game', {
+            'type': 'start',
+            'data': this.game.start(this.seats)
+        })
+        this.started = true
+    }
+
     getPerson(userId) {
         return this.audience[userId] || this.seats.filter( person => !!person && person.userInfo.openId === userId )[0]
     }

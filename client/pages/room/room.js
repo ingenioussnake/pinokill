@@ -21,6 +21,7 @@ Page({
         game: null,
         description: [],
         started: false,
+        ready: false,
         me: -1
     },
     onLoad(options) {
@@ -76,27 +77,32 @@ Page({
             if (!this.data.id) {
                 reject({type: 'room', error: "没有房间号"});
             }
-            var game = this.game = new qcloud.Tunnel(config.service.roomUrl);
-            game.on('connect', () => {
+            var conn = this.conn = new qcloud.Tunnel(config.service.roomUrl);
+            conn.on('connect', () => {
                 console.log('connected');
             });
-            game.on('close', () => console.log('closed'));
-            game.on('error', () => console.log('error'));
-            game.on('reconnect', () => {
+            conn.on('close', () => console.log('closed'));
+            conn.on('error', () => console.log('error'));
+            conn.on('reconnect', () => {
                 console.log('reconnect', arguments);
                 this.addMessage(createSystemMessage("您已重新上线"));
             });
-            game.on('reconnecting', () => {
+            conn.on('reconnecting', () => {
                 console.log('reconnecting', arguments);
                 this.addMessage(createSystemMessage("您已掉线，正在重连..."));
             });
-            game.on('join', room => {
+            conn.on('join', room => {
                 resolve(room);
             });
-            game.on('people', people => this.onPeople(people));
-            game.on('seat', seat => this.onSeat(seat));
-            game.on('game', () => console.log('game'));
-            game.open();
+            conn.on('people', people => this.onPeople(people));
+            conn.on('seat', seat => this.onSeat(seat));
+            conn.on('game', (e) => this.onGameEvent(e));
+            conn.on('failure', (error) => {
+                if (error.action === "start") {
+                    this.onSeat(error.data);
+                }
+            });
+            conn.open();
         });
     },
     initRoom(data) {
@@ -136,32 +142,17 @@ Page({
     },
     sit(e) {
         var index = e.currentTarget.dataset.index;
-        if (this.game && this.game.isActive()) {
-            this.game.emit('seat', { to: index });
+        if (this.conn && this.conn.isActive()) {
+            this.conn.emit('seat', { to: index });
         } else {
-            //...
+            console.log('connect is down');
         }
-        
-        // if (index !== seat && !this.data.seats[index].nickName) {
-        //     moveTo(this.data.seat, index).then((change)=>{
-        //         var old = change.old, now = change.now;
-        //         var seats = this.data.seats, seat = this.data.seat;
-        //         if (old !== null) {
-        //             seats[now].user = seats[old].user;
-        //             seats[old].user = null;
-        //         } else {
-        //             seats[now].user = app.globalData.userInfo;
-        //         }
-        //         seat = now; //TODO: others move?
-        //         this.setData({seats, seat});
-        //     });
-        // }
     },
     onSeat(change) {
         console.log('seats', change);
         const version = this.data.seat_version;
         const seats = this.data.seats;
-        let me = -1;
+        let me = -1, ready = true;
         if (version < change.version) {
             for (var i = 0; i < seats.length; i++) {
                 if (!!change.seats[i]) {
@@ -171,9 +162,10 @@ Page({
                     }
                 } else {
                     seats[i].userInfo = null;
+                    // ready = false;
                 }
             }
-            this.setData({ seat_version: change.version, seats: seats, me});
+            this.setData({ seat_version: change.version, seats, me, ready});
         }
     },
     onPeople(people) {
@@ -205,14 +197,28 @@ Page({
         }
         this.setData({ seats });
     },
+    onGameEvent(e) {
+        if (e.type === 'start') {
+            console.log(e.data);
+            const message = this.data.game.start(e.data, this.data.me);
+            message && this.addMessage(createSystemMessage(message));
+        }
+    },
+    start() {
+        if (this.conn && this.conn.isActive()) {
+            this.conn.emit('start');
+        } else {
+            console.log('connect is down');
+        }
+    },
     addMessage(msg) {
         const messages = this.data.messages;
         messages.push(msg);
         this.setData({ messages });
     },
     quit() {
-        if (this.game) {
-            this.game.close();
+        if (this.conn) {
+            this.conn.close();
         }
     }
 });

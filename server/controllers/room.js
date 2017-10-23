@@ -10,6 +10,9 @@ const onRoomMessage = (room, userInfo, type, content) => {
         break
         case 'kickout':
         break
+        case 'start':
+            room.start()
+        break
         default:
         break
     }

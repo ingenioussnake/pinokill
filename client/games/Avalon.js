@@ -16,6 +16,15 @@ class Avalon extends Game {
         }
     }
 
+    start(data, me) {
+        this.leader = data.leader;
+        this.round = data.round;
+        this.players = data.players;
+        this.me = me;
+        super.start(data);
+        return `游戏开始，你的身份是${ROLES[this.players[this.me].role]}，第一轮任务领袖为${this.players[this.leader]/*.userInfo.nickname*/}`
+    }
+
     getDescriptions() {
         return $getDescriptions(this.count, this.double, this.config);
     }
@@ -99,5 +108,17 @@ const GAME_INFO = {
         "member": [3, 4, 4, 5, 5]
     }
 };
+
+const ROLES = {
+    'merlin': '梅林',
+    'percival': '派西维尔',
+    'loyalist': '忠臣',
+    'lancelot': '兰斯洛特（好）',
+    'morgana': '莫甘娜',
+    'mordred': '莫德雷德',
+    'oberon': '奥伯伦',
+    'assassin': '刺客',
+    '_lancelot': '兰斯洛特（坏）'
+}
 
 module.exports = Avalon;

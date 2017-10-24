@@ -18,11 +18,12 @@ Page({
         enableSetting: false,
         messages: [],
         type: null,
-        game: null,
+        game: { players: [] },
         description: [],
         started: false,
         ready: false,
-        me: -1
+        me: -1,
+        hideRoles: false
     },
     onLoad(options) {
         console.log(this.route);
@@ -200,8 +201,11 @@ Page({
     onGameEvent(e) {
         if (e.type === 'start') {
             console.log(e.data);
-            const message = this.data.game.start(e.data, this.data.me);
+            const game = this.data.game;
+            const message = game.start(e.data, this.data.me);
             message && this.addMessage(createSystemMessage(message));
+            console.log(this.data.game);
+            this.setData({ game: game, started: true });
         }
     },
     start() {
@@ -220,14 +224,15 @@ Page({
         if (this.conn) {
             this.conn.close();
         }
+    },
+    toggleRoles(e) {
+        const data = this.data;
+        data.game.players.forEach(player => player.visible = this.data.hideRoles );
+        data.hideRoles = !data.hideRoles;
+        this.setData(data);
     }
 });
 
-// const moveTo = function (old, now) {
-//     return new Promise(resolve => {
-//         resolve({old, now});
-//     });
-// };
 const getPersonSeat = function (person, seats) {
     if (!person || !person.openId) {
         return -1;

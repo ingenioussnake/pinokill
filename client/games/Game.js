@@ -7,7 +7,7 @@ class Game {
         this.roles = options.roles;
         this.count = options.count;
         this.round = -1;
-        this.me = -1;
+        this.me = null;
     }
 
     setConfig(config) {
@@ -18,7 +18,8 @@ class Game {
 
     getDescriptions() {}
 
-    start(data) {
+    start(data, me) {
+        this.me = { index: me, role: this.players[me].role };
         this.started = true;
     }
 

@@ -20,9 +20,47 @@ class Avalon extends Game {
         this.leader = data.leader;
         this.round = data.round;
         this.players = data.players;
-        this.me = me;
-        super.start(data);
-        return `游戏开始，你的身份是${ROLES[this.players[this.me].role]}，第一轮任务领袖为${this.players[this.leader]/*.userInfo.nickname*/}`
+        super.start(data, me);
+        const my_role = this.me.role;
+        for (let i = 0; i < this.count; i++) {
+            let player = this.players[i];
+            let role = player.role;
+            switch (my_role) {
+                case 'merlin':
+                    if (role === 'morgana' || role === 'assassin' || role === 'oberon') {
+                        player.visible = true;
+                        player.campus = 'bad';
+                        player.tag = '坏蛋';
+                    }
+                break;
+                case 'percival':
+                    if (role === 'merlin' || role === 'morgana') {
+                        player.visible = true;
+                        player.tag = ROLES[role].tag;
+                        player.campus = 'unknown';
+                    }
+                break;
+                case 'morgana':
+                case 'assassin':
+                case 'mordred':
+                    if (role === 'morgana' || role === 'assassin' || role === 'modred') {
+                        player.visible = true;
+                        player.campus = 'bad';
+                        if (this.config.evil_blind_role) {
+                            player.tag = '坏蛋';
+                        } else {
+                            player.tag = ROLES[role].short;
+                        }
+                    }
+                break;
+            }
+            if (i === this.me.index) {
+                player.tag = ROLES[role].tag;
+                player.visible = true;
+                player.campus = (role === 'merlin' || role === 'percival' || role === 'loyalist') ? 'good' : 'bad'
+            }
+        }
+        return `游戏开始，第一轮任务领袖为${this.players[this.leader]/*.userInfo.nickname*/}`
     }
 
     getDescriptions() {
@@ -110,15 +148,15 @@ const GAME_INFO = {
 };
 
 const ROLES = {
-    'merlin': '梅林',
-    'percival': '派西维尔',
-    'loyalist': '忠臣',
-    'lancelot': '兰斯洛特（好）',
-    'morgana': '莫甘娜',
-    'mordred': '莫德雷德',
-    'oberon': '奥伯伦',
-    'assassin': '刺客',
-    '_lancelot': '兰斯洛特（坏）'
+    'merlin': {'label': '梅林', 'tag': '梅莫', 'short': '梅林'},
+    'percival': {'label': '派西维尔', 'tag': '派西', 'short': '派西'},
+    'loyalist': {'label': '忠臣', 'tag': '忠臣', 'short': '忠臣'},
+    'lancelot': {'label': '兰斯洛特（好）', 'tag': '好兰', 'short': '好兰'},
+    'morgana': {'label': '莫甘娜', 'tag': '梅莫', 'short': '梅莫'},
+    'mordred': {'label': '莫德雷德', 'tag': '黑莫', 'short': '黑莫'},
+    'oberon': {'label': '奥伯伦', 'tag': '懵奥', 'short': '懵奥'},
+    'assassin': {'label': '刺客', 'tag': '刺客', 'short': '刺客'},
+    '_lancelot': {'label': '兰斯洛特（坏）', 'tag': '坏兰', 'short': '坏兰'}
 }
 
 module.exports = Avalon;

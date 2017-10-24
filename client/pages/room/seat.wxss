@@ -11,8 +11,35 @@
     font-size:64rpx;
 }
 
+.seat-tag {
+    position:absolute;
+    right:0;
+    top:0;
+    font-size:32rpx;
+}
+
 .seat.seat-self .seat-index {
     color: gold;
+}
+
+.role-hidden .seat-tag {
+    display: none;
+}
+
+.campus-bad .avatar {
+    box-shadow: 0px 0px 5px 5px #D32219;
+}
+
+.campus-good .avatar {
+    box-shadow: 0px 0px 5px 5px #35A7DE;
+}
+
+.campus-unknown .avatar {
+    box-shadow: 0px 0px 5px 5px #F3E128;
+}
+
+.role-hidden .avatar {
+    box-shadow: none;
 }
 
 .avatar {

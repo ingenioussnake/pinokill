@@ -4,11 +4,13 @@
     avatar: string
     action: string
     self: boolean
+    players: { visible: boolean, campus: string, tag: string}
 -->
 <template name="seat">
-    <view class="seat {{self ? 'seat-self' : ''}}" bindtap='sit' data-index="{{index - 1}}">
+    <view class="seat {{self ? 'seat-self' : ''}} {{!players[index - 1].visible ? 'role-hidden' : ''}} {{'campus-' + players[index - 1].campus}}" bindtap='sit' data-index="{{index - 1}}">
         <view class="seat-index">{{index}}</view>
         <image class="avatar" src="{{avatarUrl ? avatarUrl : '../../assets/img/empty_seat.jpg'}}" background-size="cover"></image>
+        <view class="seat-tag">{{players[index - 1].tag}}</view>
         <view class="nickname">{{!!nickName ? nickName : '空位'}}</view>
     </view>
 </template>

@@ -10,7 +10,7 @@
     <view wx:if="{{!error}}" class="container">
         <view class="left-seats">
             <block wx:for="{{seats}}" wx:key="index">
-                <template wx:if="{{index < halfbreak}}" is="seat" data="{{index: item.index, self: index === me, ...item.userInfo}}" bindtap="sit"/>
+                <template wx:if="{{index < halfbreak}}" is="seat" data="{{index: item.index, self: index === me, players: game.players, ...item.userInfo}}" bindtap="sit"/>
             </block>
         </view>
         <view class="main">
@@ -36,11 +36,14 @@
                     </view>
                 </view>
             </scroll-view>
-            <view class="actions" wx:if="{{!started}}">
-                <view class="invite">
+            <view class="actions">
+                <view class='toggle-role' wx:if="{{started}}">
+                    <button bindtap='toggleRoles' data-hide='true'>{{hideRoles ? '显示' : '隐藏'}}身份</button>
+                </view>
+                <view class="invite" wx:if="{{!started}}">
                     <button open-type='share'>邀请</button>
                 </view>
-                <view class="host-actions" wx:if="{{host}}">
+                <view class="host-actions" wx:if="{{!started && host}}">
                     <button wx:if="{{enableSettings}}">设置</button>
                     <button type="primary" bindtap='start' wx:if="{{ready}}">开始</button>
                 </view>
@@ -48,7 +51,7 @@
         </view>
         <view class="right-seats">
             <block wx:for="{{seats}}" wx:key="index">
-                <template wx:if="{{index >= halfbreak}}" is="seat" data="{{index: item.index, self: index === me, ...item.userInfo}}" bindtap="sit"/>
+                <template wx:if="{{index >= halfbreak}}" is="seat" data="{{index: item.index, self: index === me, players: game.players, ...item.userInfo}}" bindtap="sit"/>
             </block>
         </view>
     </view>
